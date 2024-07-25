@@ -8,8 +8,9 @@ import { verifySchema } from '@/schemas/verifySchema'
 import { ApiResponse } from '@/types/ApiResponse'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios, { AxiosError } from 'axios'
+import { Loader2 } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useState } from 'react'
 import {useForm } from 'react-hook-form'
 import * as z from 'zod'
 
@@ -18,13 +19,14 @@ const VerifyAccount = () => {
     const router = useRouter()
     const param = useParams<{username: string}>()
     const {toast} = useToast()
-    
+    const [isSubmitting,setisSubmitting] = useState(false)
     const form = useForm<z.infer<typeof verifySchema>>({
         resolver: zodResolver(verifySchema),
         
     })
 
     const onSubmit = async (data: z.infer<typeof verifySchema>) => {
+        setisSubmitting(true)
         try {
             const response = await axios.post(`/api/verify-code`,{
                 username: param.username,
@@ -34,7 +36,8 @@ const VerifyAccount = () => {
                 title:"success",
                 description: response.data.message
             })
-            router.replace("sign-in")
+            setisSubmitting(false)
+            router.replace("/sign-in")
         } catch (error) {
             console.error("error in signin of user",error)
             const axiosError = error as AxiosError<ApiResponse>
@@ -44,6 +47,7 @@ const VerifyAccount = () => {
                 description: errorMessage,
                 variant: "destructive"
             })
+            setisSubmitting(false)
         }
     }
 
@@ -73,7 +77,9 @@ const VerifyAccount = () => {
                             </FormItem>
                     )}
                     />
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">
+                        {isSubmitting ? (<Loader2 className='animate-spin'/>):("Submit")}
+                    </Button>
                 </form>
             </Form>
         </div>
