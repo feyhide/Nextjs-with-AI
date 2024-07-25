@@ -1,0 +1,19 @@
+[
+    {
+        "title":"Message from User1",
+        "content":"Hey kese ho",
+        "received":"10 mins ago"
+    },
+    
+    {
+        "title":"Message from User2",
+        "content":"Hey kese ho",
+        "received":"10 mins ago"
+    },
+    
+    {
+        "title":"Message from User2",
+        "content":"Hey kese ho",
+        "received":"10 mins ago"
+    }
+]

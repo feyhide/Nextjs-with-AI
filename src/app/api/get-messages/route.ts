@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 export async function GET(req:Request){
     await dbConnect()
     const session = await getServerSession(authOptions)
-    const user:User = session?.user
+    const user = session?.user
 
     if(!session || !session.user){
         return Response.json(
@@ -27,11 +27,12 @@ export async function GET(req:Request){
 
     try {
         const user = await UserModel.aggregate([
-            {$match: {id:userId}},
-            {$unwind: "$messages"},
-            {$sort: {'messages.createdAt':-1}},
-            {$group: {_id: "$_id",messages: {$push:"$messages"}}}
+            {$match: {_id:userId}},
+            {$unwind: "$message"},
+            {$sort: {'message.createdAt':-1}},
+            {$group: {_id: "$_id",message: {$push:"$message"}}}
         ])
+        console.log(userId,user)
         if(!user || user.length === 0){
             return Response.json(
                 {
@@ -46,7 +47,7 @@ export async function GET(req:Request){
         return Response.json(
             {
                 success:true,
-                messages: user[0].messages
+                messages: user[0].message
             },
             {
                 status:200
